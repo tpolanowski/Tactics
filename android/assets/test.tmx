@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="staggered" width="20" height="20" tilewidth="42" tileheight="42">
+ <tileset firstgid="1" name="iso-64x64-outside" tilewidth="64" tileheight="64">
+  <image source="../Tilesets/iso-64x64-outside.png" width="640" height="1024"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzzYWBg8BnFoxgPtgBiTyqY4ws1y4JK7oKZ50gFM5HNcqCBfykNQ18086jlPmqa6Qs1A2SWBxXj2IOK5vlQKexGMQQDADrwdXA=
+  </data>
+ </layer>
+ <layer name="Tile Layer 2" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzF0rFuwjAQBuCT8Fqsemnep+ozlC4VG3OBKp1aykgzAiPto/Ys/pN/rk6AqSf9ignxl4ttkWOtpVRAfCXcv0Ui/beg8Zq8QImURF7AOJLV5/WZiYxAv6/1/Fz2m8q3eu8GYa/B/Lnm1fXry+YPWdZH9pYDljfZGyF3ZGbvBf01Val4LXlssZedjwGHqz1j8tmp1ZemwzjCSnK6ftkZ42pnJefeWRuko3stnvX7YRafv6nztvCsIl0DXb2Xe51onqSs4xbZafbuPdYfrxWbYzz3rJlp3mjuTv5WzfP9Cb73UfOuOVScXJ9kmss27wfvsZnfmh+y2PM912KWzW17+qtVzVtJWT87u5d6vmxvH8hbXTH/P+sX6W8rlA==
+  </data>
+ </layer>
+</map>
