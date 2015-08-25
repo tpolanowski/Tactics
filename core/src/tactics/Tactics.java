@@ -7,7 +7,9 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -15,41 +17,63 @@ import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public class Tactics extends ApplicationAdapter implements InputProcessor{
-	//SpriteBatch batch;
-	//Texture img;
+	private static final int FRAME_COLS = 6;
+	private static final int FRAME_ROWS = 6;
+
+	Animation knightAnimation;
+	SpriteBatch spriteBatch;
+	Texture knightSheet;
+	TextureRegion[] knightFrames;
+	TextureRegion currentFrame;
 
 	TiledMap tiledMap;
 	TiledMapRenderer tiledMapRenderer;
 	OrthographicCamera camera;
 
+	float stateTime;
+
 	@Override
 	public void create () {
-		//batch = new SpriteBatch();
-		//img = new Texture("badlogic.jpg");
-
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false,w,h);
+		camera.setToOrtho(false,w/1.5f,h);
+		//camera.translate(0,-300);
 		camera.update();
 		tiledMap = new TmxMapLoader().load("test.tmx");
 		tiledMapRenderer = new IsometricTiledMapRenderer(tiledMap);
 		Gdx.input.setInputProcessor(this);
+
+		knightSheet = new Texture("Sprites/MaleKnight.png");
+		TextureRegion[][] tmp = TextureRegion.split(knightSheet, knightSheet.getWidth()/FRAME_COLS, knightSheet.getHeight()/FRAME_ROWS);              // #10
+		knightFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
+		int index = 0;
+		for (int i = 0; i < FRAME_ROWS; i++) {
+			for (int j = 0; j < FRAME_COLS; j++) {
+				knightFrames[index++] = tmp[i][j];
+			}
+		}
+		knightAnimation = new Animation(0.025f, knightFrames);
+		spriteBatch = new SpriteBatch();
+		stateTime = 0f;
+
 	}
 
 	@Override
 	public void render () {
-		//batch.begin();
-		//batch.draw(img, 0, 0);
-		//batch.end();
-
 		Gdx.gl.glClearColor(0, 0.1f, 0.05f, 1);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_CONSTANT_ALPHA);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
 		tiledMapRenderer.setView(camera);
 		tiledMapRenderer.render();
+
+		stateTime += Gdx.graphics.getDeltaTime();           // #15
+		currentFrame = knightAnimation.getKeyFrame(stateTime, true);  // #16
+		spriteBatch.begin();
+		spriteBatch.draw(currentFrame, 50, 50);             // #17
+		spriteBatch.end();
 	}
 
 	/**
@@ -72,13 +96,21 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	@Override
 	public boolean keyUp(int keycode) {
 		if(keycode == Input.Keys.LEFT)
-			camera.translate(-32,0);
+			camera.translate(-64,0);
 		if(keycode == Input.Keys.RIGHT)
-			camera.translate(32,0);
+			camera.translate(64,0);
 		if(keycode == Input.Keys.UP)
-			camera.translate(0,-32);
+			camera.translate(0,64);
 		if(keycode == Input.Keys.DOWN)
-			camera.translate(0,32);
+			camera.translate(0,-64);
+		if(keycode == Input.Keys.A)
+			camera.translate(-64,0);
+		if(keycode == Input.Keys.D)
+			camera.translate(64,0);
+		if(keycode == Input.Keys.W)
+			camera.translate(0,64);
+		if(keycode == Input.Keys.S)
+			camera.translate(0,-64);
 		if(keycode == Input.Keys.NUM_1)
 			tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
 		if(keycode == Input.Keys.NUM_2)
