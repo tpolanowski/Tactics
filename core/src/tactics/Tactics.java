@@ -42,6 +42,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	Stage stage;
 	Actor actor;
 	KnightActor knightActor;
+	LichActor lichActor;
 
 	float stateTime;
 	float animationSpeed = 0.2f;
@@ -77,16 +78,18 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		//camera.translate(150,-180);
 		camera.translate(-50,-430);
 		camera.update();
-		knightActor = new KnightActor(knightAnimation);
+		knightActor = new KnightActor();
+		lichActor = new LichActor();
 
 		knightActor.stand();
+		lichActor.attack();
 		MoveToAction moveAction = new MoveToAction();
 		moveAction.setPosition(300f, 0f);
 		moveAction.setDuration(10f);
 		knightActor.addAction(moveAction);
 
 		stage.addActor(knightActor);
-
+		stage.addActor(lichActor);
 
 	}
 
