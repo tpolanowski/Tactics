@@ -79,6 +79,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		camera.update();
 		knightActor = new KnightActor(knightAnimation);
 
+		knightActor.stand();
 		MoveToAction moveAction = new MoveToAction();
 		moveAction.setPosition(300f, 0f);
 		moveAction.setDuration(10f);
