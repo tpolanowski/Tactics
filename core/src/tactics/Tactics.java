@@ -14,6 +14,15 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
+import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.ScalingViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Tactics extends ApplicationAdapter implements InputProcessor{
 	private static final int FRAME_COLS = 6;
@@ -30,24 +39,28 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	OrthographicCamera camera;
 	Tiles tiles;
 
+	Stage stage;
+	Actor actor;
+	KnightActor knightActor;
+
 	float stateTime;
 	float animationSpeed = 0.2f;
 
 	@Override
 	public void create () {
 		tiles = new Tiles(810, 800, 20);
+
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false,w/1.5f,h);
-		camera.translate(0,-300);
-		camera.update();
+
 		tiledMap = new TmxMapLoader().load("test.tmx");
 		tiledMapRenderer = new IsometricTiledMapRenderer(tiledMap);
 		Gdx.input.setInputProcessor(this);
 
-		knightSheet = new Texture("Sprites/Knight/Standing.png");
+		knightSheet = new Texture("Sprites/Knight/Walking.png");
 		TextureRegion[][] tmp = TextureRegion.split(knightSheet, knightSheet.getWidth()/FRAME_COLS, knightSheet.getHeight()/FRAME_ROWS);              // #10
 		knightFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
 		int index = 0;
@@ -59,6 +72,20 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		knightAnimation = new Animation(0.025f, knightFrames);
 		spriteBatch = new SpriteBatch();
 		stateTime = 0f;
+
+		stage = new Stage(new StretchViewport(1000,1000,camera)); //600,600
+		//camera.translate(150,-180);
+		camera.translate(-50,-430);
+		camera.update();
+		knightActor = new KnightActor(knightAnimation);
+
+		MoveToAction moveAction = new MoveToAction();
+		moveAction.setPosition(300f, 0f);
+		moveAction.setDuration(10f);
+		knightActor.addAction(moveAction);
+
+		stage.addActor(knightActor);
+
 
 	}
 
@@ -76,17 +103,25 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 
 		spriteBatch.setProjectionMatrix(camera.combined);
 		spriteBatch.begin();
-		for(Coord[] coordOuter : tiles.getCoords()) {
-            for(Coord coordInner : coordOuter) {
-                //System.out.println(coordInner);
-				spriteBatch.draw(currentFrame, coordInner.getX(), coordInner.getY());
-            }
-        }
-//		spriteBatch.draw(currentFrame, 410, 430);
+//		for(Coord[] coordOuter : tiles.getCoords()) {
+//            for(Coord coordInner : coordOuter) {
+//                //System.out.println(coordInner);
+//				spriteBatch.draw(currentFrame, coordInner.getX(), coordInner.getY());
+//            }
+//        }
+		spriteBatch.draw(currentFrame, 410, 430);
 //		spriteBatch.draw(currentFrame, 410,-370);
 //		spriteBatch.draw(currentFrame,   0,  30);
 //		spriteBatch.draw(currentFrame, 810,  30);
 		spriteBatch.end();
+		//stage.setViewport(camera.);
+
+
+
+
+		stage.draw();
+		stage.act(Gdx.graphics.getDeltaTime());
+		//stage.se
 	}
 
 	/**

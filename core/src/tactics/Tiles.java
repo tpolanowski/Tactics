@@ -26,7 +26,8 @@ public class Tiles {
             for (int j = 0; j < count; j++) {
                 //System.out.println("test ("+i+", "+j+")");
                 if (j != 0) {
-                    coords[i][j] = new Coord(baseX +j*21.58f, baseY -j*20.47f , i, j);
+                    coords[i][j] = new Coord(baseX +j*21.58f, baseY
+                            -j*20.47f , i, j);
                 }
                 else {
                     coords[i][j] = new Coord(baseX, baseY, i, j);
