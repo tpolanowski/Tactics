@@ -16,8 +16,8 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 
 public class Tactics extends ApplicationAdapter implements InputProcessor{
-	private static final int FRAME_COLS = 5;
-	private static final int FRAME_ROWS = 2;
+	private static final int FRAME_COLS = 6;
+	private static final int FRAME_ROWS = 1;
 
 	Animation knightAnimation;
 	SpriteBatch spriteBatch;
@@ -28,12 +28,14 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	TiledMap tiledMap;
 	TiledMapRenderer tiledMapRenderer;
 	OrthographicCamera camera;
+	Tiles tiles;
 
 	float stateTime;
 	float animationSpeed = 0.2f;
 
 	@Override
 	public void create () {
+		tiles = new Tiles(810, 800, 20);
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 
@@ -45,7 +47,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		tiledMapRenderer = new IsometricTiledMapRenderer(tiledMap);
 		Gdx.input.setInputProcessor(this);
 
-		knightSheet = new Texture("Sprites/Lich/Attack.png");
+		knightSheet = new Texture("Sprites/Knight/Standing.png");
 		TextureRegion[][] tmp = TextureRegion.split(knightSheet, knightSheet.getWidth()/FRAME_COLS, knightSheet.getHeight()/FRAME_ROWS);              // #10
 		knightFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
 		int index = 0;
@@ -72,8 +74,18 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		stateTime += Gdx.graphics.getDeltaTime();           // #15
 		currentFrame = knightAnimation.getKeyFrame(animationSpeed * stateTime, true);  // #16
 
+		spriteBatch.setProjectionMatrix(camera.combined);
 		spriteBatch.begin();
-		spriteBatch.draw(currentFrame, 100, 100);             // #17
+		for(Coord[] coordOuter : tiles.getCoords()) {
+            for(Coord coordInner : coordOuter) {
+                //System.out.println(coordInner);
+				spriteBatch.draw(currentFrame, coordInner.getX(), coordInner.getY());
+            }
+        }
+//		spriteBatch.draw(currentFrame, 410, 430);
+//		spriteBatch.draw(currentFrame, 410,-370);
+//		spriteBatch.draw(currentFrame,   0,  30);
+//		spriteBatch.draw(currentFrame, 810,  30);
 		spriteBatch.end();
 	}
 
