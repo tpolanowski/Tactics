@@ -14,11 +14,10 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public class Tactics extends ApplicationAdapter implements InputProcessor{
-	private static final int FRAME_COLS = 6;
-	private static final int FRAME_ROWS = 6;
+	private static final int FRAME_COLS = 5;
+	private static final int FRAME_ROWS = 2;
 
 	Animation knightAnimation;
 	SpriteBatch spriteBatch;
@@ -31,6 +30,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	OrthographicCamera camera;
 
 	float stateTime;
+	float animationSpeed = 0.2f;
 
 	@Override
 	public void create () {
@@ -39,13 +39,13 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false,w/1.5f,h);
-		//camera.translate(0,-300);
+		camera.translate(0,-300);
 		camera.update();
 		tiledMap = new TmxMapLoader().load("test.tmx");
 		tiledMapRenderer = new IsometricTiledMapRenderer(tiledMap);
 		Gdx.input.setInputProcessor(this);
 
-		knightSheet = new Texture("Sprites/MaleKnight.png");
+		knightSheet = new Texture("Sprites/Lich/Attack.png");
 		TextureRegion[][] tmp = TextureRegion.split(knightSheet, knightSheet.getWidth()/FRAME_COLS, knightSheet.getHeight()/FRAME_ROWS);              // #10
 		knightFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
 		int index = 0;
@@ -70,9 +70,10 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		tiledMapRenderer.render();
 
 		stateTime += Gdx.graphics.getDeltaTime();           // #15
-		currentFrame = knightAnimation.getKeyFrame(stateTime, true);  // #16
+		currentFrame = knightAnimation.getKeyFrame(animationSpeed * stateTime, true);  // #16
+
 		spriteBatch.begin();
-		spriteBatch.draw(currentFrame, 50, 50);             // #17
+		spriteBatch.draw(currentFrame, 100, 100);             // #17
 		spriteBatch.end();
 	}
 
