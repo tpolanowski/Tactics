@@ -21,14 +21,21 @@ public class LichActor extends Image {
     public int x;
     public int y;
 
+    public int speed;
+    public int strength;
+    public int health;
+
     static {
         initAnimations();
     }
 
-    public LichActor (int x, int y) {
+    public LichActor (int x, int y, int speed, int strength, int health) {
         this(animationStanding);
         this.x = x;
         this.y = y;
+        this.speed = speed;
+        this.strength = strength;
+        this.health = health;
     }
 
     public LichActor (Animation animation) {

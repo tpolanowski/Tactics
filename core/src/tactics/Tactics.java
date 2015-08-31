@@ -31,15 +31,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.ArrayList;
 
 public class Tactics extends ApplicationAdapter implements InputProcessor{
-	private static final int FRAME_COLS = 6;
-	private static final int FRAME_ROWS = 1;
-
-	Animation knightAnimation;
-	SpriteBatch spriteBatch;
-	Texture knightSheet;
-	TextureRegion[] knightFrames;
-	TextureRegion currentFrame;
-
 	TiledMap tiledMap;
 	TiledMapRenderer tiledMapRenderer;
 	OrthographicCamera camera;
@@ -48,13 +39,12 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	Stage stage;
 	ArrayList<KnightActor> knights;
 	ArrayList<LichActor> liches;
-	KnightActor knightActor;
-	LichActor lichActor;
 
-	float stateTime;
-	float animationSpeed = 0.2f;
+	ArrayList<>
 
 	Vector3 lastTouchDown = new Vector3();
+
+	int turn = 0;
 
 	@Override
 	public void create () {
@@ -81,17 +71,17 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		knights = new ArrayList<KnightActor>(5);
 		liches = new ArrayList<LichActor>(5);
 
-		knights.add(new KnightActor(17,5));
-		knights.add(new KnightActor(16,7));
-		knights.add(new KnightActor(17,9));
-		knights.add(new KnightActor(16,11));
-		knights.add(new KnightActor(17,13));
+		knights.add(new KnightActor(17, 5,23,43,57));
+		knights.add(new KnightActor(16, 7,25,35,65));
+		knights.add(new KnightActor(17, 9,27,47,86));
+		knights.add(new KnightActor(16,11,24,39,64));
+		knights.add(new KnightActor(17,13,19,40,49));
 
-		liches.add(new LichActor(3,5));
-		liches.add(new LichActor(2,7));
-		liches.add(new LichActor(3,9));
-		liches.add(new LichActor(2,11));
-		liches.add(new LichActor(3,13));
+		liches.add(new LichActor(3, 5,31,45, 65));
+		liches.add(new LichActor(2, 7,32,48, 71));
+		liches.add(new LichActor(3, 9,34,54,107));
+		liches.add(new LichActor(2,11,33,50, 87));
+		liches.add(new LichActor(3,13,30,45, 59));
 
 		initActors();
 
@@ -113,7 +103,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		stage.draw();
 		stage.act(Gdx.graphics.getDeltaTime());
 	}
-
+	/* Initialize actors' positions */
 	public void initActors() {
 		for (KnightActor knightActor : knights) {
 			knightActor.addAction(moveTo(tiles.getCoord(knightActor.x,knightActor.y).getX(),tiles.getCoord(knightActor.x,knightActor.y).getY()));
@@ -126,6 +116,22 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 			stage.addActor(lichActor);
 		}
 	}
+
+	public void turn() {
+		ArrayList<Actor> actors = new ArrayList<Actor>(10);
+		for (KnightActor knightActor : knights) {
+			actors.add(knightActor);
+		}
+		for (LichActor lichActor : liches) {
+			actors.add(lichActor);
+		}
+		for (Actor Actor : actors) {
+
+		}
+
+		turn++;
+	}
+
 	/**
 	 * Called when a key was pressed
 	 *
