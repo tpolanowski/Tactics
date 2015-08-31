@@ -1,5 +1,8 @@
 package tactics;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+
+import android.graphics.Color;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -15,6 +18,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
@@ -40,12 +44,13 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	Tiles tiles;
 
 	Stage stage;
-	Actor actor;
 	KnightActor knightActor;
 	LichActor lichActor;
 
 	float stateTime;
 	float animationSpeed = 0.2f;
+
+	Vector3 lastTouchDown = new Vector3();
 
 	@Override
 	public void create () {
@@ -81,15 +86,17 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		knightActor = new KnightActor();
 		lichActor = new LichActor();
 
-		knightActor.stand();
+		knightActor.walk();
 		lichActor.attack();
 		MoveToAction moveAction = new MoveToAction();
 		moveAction.setPosition(300f, 0f);
 		moveAction.setDuration(10f);
-		knightActor.addAction(moveAction);
+		//knightActor.addAction(moveAction);
 
+		knightActor.addAction(sequence(moveTo(200, 100, 2), color(com.badlogic.gdx.graphics.Color.RED, 6), delay(0.5f), rotateTo(90, 2)));
 		stage.addActor(knightActor);
 		stage.addActor(lichActor);
+
 
 	}
 
@@ -182,7 +189,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	}
 
 	/**
-	 * Called when the screen was touched or a mouse button was pressed. The button parameter will be {@link Buttons#LEFT} on iOS.
+	 * Called when the screen was touched or a mouse button was pressed. The button parameter will be  on iOS.
 	 *
 	 * @param screenX The x coordinate, origin is in the upper left corner
 	 * @param screenY The y coordinate, origin is in the upper left corner
@@ -196,7 +203,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	}
 
 	/**
-	 * Called when a finger was lifted or a mouse button was released. The button parameter will be {@link Buttons#LEFT} on iOS.
+	 * Called when a finger was lifted or a mouse button was released. The button parameter will be  on iOS.
 	 *
 	 * @param screenX
 	 * @param screenY
@@ -217,6 +224,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	 */
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		moveCamera(screenX-1280/2, screenY-720/2);
 		return false;
 	}
 
@@ -240,6 +248,38 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	 */
 	@Override
 	public boolean scrolled(int amount) {
+		stage.getCamera().viewportWidth = stage.getCamera().viewportWidth + 20*amount;
+		stage.getCamera().viewportHeight = stage.getCamera().viewportHeight + 20*amount;
 		return false;
+	}
+
+	private void moveCamera(int touchX, int touchY) {
+		Vector3 newPosition = getNewCameraPosition(touchX, touchY);
+		//if( !cameraOutOfLimit( newPosition ) ) //TODO debug
+		stage.getCamera().translate( newPosition.sub( stage.getCamera().position ) );
+
+		lastTouchDown.set( touchX, touchY, 0);
+	}
+
+	private Vector3 getNewCameraPosition(int x, int y) {
+		Vector3 newPosition = lastTouchDown;
+		newPosition.sub(x,y,0);
+		newPosition.y = -newPosition.y;
+		newPosition.add(stage.getCamera().position);
+
+		return newPosition;
+	}
+	private boolean cameraOutOfLimit( Vector3 position ) {
+		int x_left_limit = 1280 / 2;
+		int x_right_limit = 1000 - 1280 / 2;
+		int y_bottom_limit = 720 / 2;
+		int y_top_limit = 1000 - 720 / 2;
+
+		if( position.x < x_left_limit || position.x > x_right_limit )
+			return true;
+		else if( position.y < y_bottom_limit || position.y > y_top_limit )
+			return true;
+		else
+			return false;
 	}
 }
