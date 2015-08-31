@@ -28,6 +28,8 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.util.ArrayList;
+
 public class Tactics extends ApplicationAdapter implements InputProcessor{
 	private static final int FRAME_COLS = 6;
 	private static final int FRAME_ROWS = 1;
@@ -44,6 +46,8 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	Tiles tiles;
 
 	Stage stage;
+	ArrayList<KnightActor> knights;
+	ArrayList<LichActor> liches;
 	KnightActor knightActor;
 	LichActor lichActor;
 
@@ -66,36 +70,33 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		tiledMapRenderer = new IsometricTiledMapRenderer(tiledMap);
 		Gdx.input.setInputProcessor(this);
 
-		knightSheet = new Texture("Sprites/Knight/Walking.png");
-		TextureRegion[][] tmp = TextureRegion.split(knightSheet, knightSheet.getWidth()/FRAME_COLS, knightSheet.getHeight()/FRAME_ROWS);              // #10
-		knightFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
-		int index = 0;
-		for (int i = 0; i < FRAME_ROWS; i++) {
-			for (int j = 0; j < FRAME_COLS; j++) {
-				knightFrames[index++] = tmp[i][j];
-			}
-		}
-		knightAnimation = new Animation(0.025f, knightFrames);
-		spriteBatch = new SpriteBatch();
-		stateTime = 0f;
 
 		stage = new Stage(new StretchViewport(1000,1000,camera)); //600,600
 		//camera.translate(150,-180);
 		camera.translate(-50,-430);
 		camera.update();
-		knightActor = new KnightActor();
-		lichActor = new LichActor();
 
-		knightActor.walk();
-		lichActor.attack();
-		MoveToAction moveAction = new MoveToAction();
-		moveAction.setPosition(300f, 0f);
-		moveAction.setDuration(10f);
+		// Actors
+
+		knights = new ArrayList<KnightActor>(5);
+		liches = new ArrayList<LichActor>(5);
+
+		knights.add(new KnightActor(17,5));
+		knights.add(new KnightActor(16,7));
+		knights.add(new KnightActor(17,9));
+		knights.add(new KnightActor(16,11));
+		knights.add(new KnightActor(17,13));
+
+		liches.add(new LichActor(3,5));
+		liches.add(new LichActor(2,7));
+		liches.add(new LichActor(3,9));
+		liches.add(new LichActor(2,11));
+		liches.add(new LichActor(3,13));
+
+		initActors();
+
 		//knightActor.addAction(moveAction);
-
-		knightActor.addAction(sequence(moveTo(200, 100, 2), color(com.badlogic.gdx.graphics.Color.RED, 6), delay(0.5f), rotateTo(90, 2)));
-		stage.addActor(knightActor);
-		stage.addActor(lichActor);
+		//knightActor.addAction(sequence(moveTo(200, 100, 2), color(com.badlogic.gdx.graphics.Color.RED, 6), delay(0.5f), rotateTo(90, 2)));
 
 
 	}
@@ -109,32 +110,22 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		tiledMapRenderer.setView(camera);
 		tiledMapRenderer.render();
 
-		stateTime += Gdx.graphics.getDeltaTime();           // #15
-		currentFrame = knightAnimation.getKeyFrame(animationSpeed * stateTime, true);  // #16
-
-		spriteBatch.setProjectionMatrix(camera.combined);
-		spriteBatch.begin();
-//		for(Coord[] coordOuter : tiles.getCoords()) {
-//            for(Coord coordInner : coordOuter) {
-//                //System.out.println(coordInner);
-//				spriteBatch.draw(currentFrame, coordInner.getX(), coordInner.getY());
-//            }
-//        }
-		spriteBatch.draw(currentFrame, 410, 430);
-//		spriteBatch.draw(currentFrame, 410,-370);
-//		spriteBatch.draw(currentFrame,   0,  30);
-//		spriteBatch.draw(currentFrame, 810,  30);
-		spriteBatch.end();
-		//stage.setViewport(camera.);
-
-
-
-
 		stage.draw();
 		stage.act(Gdx.graphics.getDeltaTime());
-		//stage.se
 	}
 
+	public void initActors() {
+		for (KnightActor knightActor : knights) {
+			knightActor.addAction(moveTo(tiles.getCoord(knightActor.x,knightActor.y).getX(),tiles.getCoord(knightActor.x,knightActor.y).getY()));
+			knightActor.stand();
+			stage.addActor(knightActor);
+		}
+		for (LichActor lichActor : liches) {
+			lichActor.addAction(moveTo(tiles.getCoord(lichActor.x, lichActor.y).getX(), tiles.getCoord(lichActor.x, lichActor.y).getY()));
+			lichActor.stand();
+			stage.addActor(lichActor);
+		}
+	}
 	/**
 	 * Called when a key was pressed
 	 *

@@ -1,5 +1,7 @@
 package tactics;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,12 +21,17 @@ public class KnightActor extends Image {
     static protected TextureRegion currentFrame;
     private float stateTime = 0;
 
+    public int x;
+    public int y;
+
     static {
         initAnimations();
     }
 
-    public KnightActor () {
+    public KnightActor (int x, int y) {
         this(animationStanding);
+        this.x = x;
+        this.y = y;
     }
 
     public KnightActor (Animation animation) {

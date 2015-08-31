@@ -18,12 +18,17 @@ public class LichActor extends Image {
     static protected TextureRegion currentFrame;
     private float stateTime = 0;
 
+    public int x;
+    public int y;
+
     static {
         initAnimations();
     }
 
-    public LichActor () {
+    public LichActor (int x, int y) {
         this(animationStanding);
+        this.x = x;
+        this.y = y;
     }
 
     public LichActor (Animation animation) {
