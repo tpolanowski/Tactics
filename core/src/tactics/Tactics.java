@@ -23,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -148,11 +149,17 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 				// AI goes here
 				LichActor lichActor = (LichActor) character;
 				lichActor.fly();
-				lichActor.addAction(moveTo(tiles.getCoord(lichActor.x+4, lichActor.y).getX(), tiles.getCoord(lichActor.x+4, lichActor.y).getY(), 10));
+
+				lichActor.addAction(sequence(
+						moveTo(tiles.getCoord(lichActor.x+4, lichActor.y).getX(), tiles.getCoord(lichActor.x+4, lichActor.y).getY(), 3)
+						,delay(2f)
+				));
+
 
 			} else {
 				// player control
 			}
+
 			System.out.println(character.toString());
 		}
 
