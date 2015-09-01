@@ -29,6 +29,8 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Tactics extends ApplicationAdapter implements InputProcessor{
 	TiledMap tiledMap;
@@ -40,7 +42,6 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	ArrayList<KnightActor> knights;
 	ArrayList<LichActor> liches;
 
-	ArrayList<>
 
 	Vector3 lastTouchDown = new Vector3();
 
@@ -71,29 +72,31 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		knights = new ArrayList<KnightActor>(5);
 		liches = new ArrayList<LichActor>(5);
 
-		knights.add(new KnightActor(17, 5,23,43,57));
-		knights.add(new KnightActor(16, 7,25,35,65));
-		knights.add(new KnightActor(17, 9,27,47,86));
-		knights.add(new KnightActor(16,11,24,39,64));
-		knights.add(new KnightActor(17,13,19,40,49));
+		knights.add(new KnightActor("Knight1",17, 5,23,43,57));
+		knights.add(new KnightActor("Knight2",16, 7,25,35,65));
+		knights.add(new KnightActor("Knight3",17, 9,27,47,86));
+		knights.add(new KnightActor("Knight4",16,11,24,39,64));
+		knights.add(new KnightActor("Knight5",17,13,19,40,49));
 
-		liches.add(new LichActor(3, 5,31,45, 65));
-		liches.add(new LichActor(2, 7,32,48, 71));
-		liches.add(new LichActor(3, 9,34,54,107));
-		liches.add(new LichActor(2,11,33,50, 87));
-		liches.add(new LichActor(3,13,30,45, 59));
+		liches.add(new LichActor("Lich1",3, 5,31,45, 65));
+		liches.add(new LichActor("Lich2",2, 7,32,48, 71));
+		liches.add(new LichActor("Lich3",3, 9,34,54,107));
+		liches.add(new LichActor("Lich4",2,11,33,50, 87));
+		liches.add(new LichActor("Lich5",3,13,30,45, 59));
 
 		initActors();
 
 		//knightActor.addAction(moveAction);
 		//knightActor.addAction(sequence(moveTo(200, 100, 2), color(com.badlogic.gdx.graphics.Color.RED, 6), delay(0.5f), rotateTo(90, 2)));
 
-
+		turn();
 	}
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(0, 0.1f, 0.05f, 1);
+		//Gdx.gl.glClearColor(0, 0.1f, 0.05f, 1);
+		Gdx.gl.glClearColor(0.3f, 0.6f, 0.9f, 1);
+
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_CONSTANT_ALPHA);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		camera.update();
@@ -118,16 +121,42 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	}
 
 	public void turn() {
-		ArrayList<Actor> actors = new ArrayList<Actor>(10);
+		ArrayList<Character> characters = new ArrayList<Character>(knights.size() + liches.size());
 		for (KnightActor knightActor : knights) {
-			actors.add(knightActor);
+			characters.add(knightActor);
 		}
 		for (LichActor lichActor : liches) {
-			actors.add(lichActor);
+			characters.add(lichActor);
 		}
-		for (Actor Actor : actors) {
 
+		Collections.sort(characters, new Comparator<Character>() {
+			@Override
+			public int compare(Character character1, Character character2) {
+				if (character1.getSpeed() > character2.getSpeed()) {
+					return -1;
+				} else if (character1.getSpeed() < character2.getSpeed()){
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		});
+
+		// Each character gets one move during this turn
+		for (Character character : characters) {
+			if(character instanceof LichActor) {
+				// AI goes here
+				LichActor lichActor = (LichActor) character;
+				lichActor.fly();
+				lichActor.addAction(moveTo(tiles.getCoord(lichActor.x+4, lichActor.y).getX(), tiles.getCoord(lichActor.x+4, lichActor.y).getY(), 10));
+
+			} else {
+				// player control
+			}
+			System.out.println(character.toString());
 		}
+
+
 
 		turn++;
 	}

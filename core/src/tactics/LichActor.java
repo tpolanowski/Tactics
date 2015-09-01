@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
-public class LichActor extends Image {
+public class LichActor extends Image implements Character {
 
     protected Animation animation;
     static protected Animation animationStanding;
@@ -17,6 +17,8 @@ public class LichActor extends Image {
     static protected TextureRegion[] lichFrames;
     static protected TextureRegion currentFrame;
     private float stateTime = 0;
+
+    public String name;
 
     public int x;
     public int y;
@@ -29,8 +31,9 @@ public class LichActor extends Image {
         initAnimations();
     }
 
-    public LichActor (int x, int y, int speed, int strength, int health) {
+    public LichActor (String name, int x, int y, int speed, int strength, int health) {
         this(animationStanding);
+        this.name = name;
         this.x = x;
         this.y = y;
         this.speed = speed;
@@ -101,5 +104,56 @@ public class LichActor extends Image {
     public void act (float delta) {
         ((TextureRegionDrawable)getDrawable()).setRegion(animation.getKeyFrame(0.2f*(stateTime+=delta), true));
         super.act(delta);
+    }
+    @Override
+    public int getSpeed() {
+        return speed;
+    }
+
+    @Override
+    public int getStrength() {
+        return strength;
+    }
+
+    @Override
+    public int getHealth() {
+        return health;
+    }
+
+    @Override
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    @Override
+    public int getXField() {
+        return x;
+    }
+
+    @Override
+    public int getYField() {
+        return y;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "LichActor{" +
+                "x=" + x +
+                ", name='" + name + '\'' +
+                ", y=" + y +
+                ", speed=" + speed +
+                ", strength=" + strength +
+                ", health=" + health +
+                '}';
     }
 }
