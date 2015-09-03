@@ -2,7 +2,7 @@ package tactics;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
-import android.graphics.Color;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -43,6 +44,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	ArrayList<KnightActor> knights;
 	ArrayList<LichActor> liches;
 
+	ShapeRenderer shapeRenderer;
 
 	Vector3 lastTouchDown = new Vector3();
 
@@ -62,6 +64,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		tiledMapRenderer = new IsometricTiledMapRenderer(tiledMap);
 		Gdx.input.setInputProcessor(this);
 
+		shapeRenderer = new ShapeRenderer();
 
 		stage = new Stage(new StretchViewport(1000,1000,camera)); //600,600
 		//camera.translate(150,-180);
@@ -106,6 +109,19 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 
 		stage.draw();
 		stage.act(Gdx.graphics.getDeltaTime());
+
+		//shapeRenderer.setProjectionMatrix(camera.combined);
+
+		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+		//shapeRenderer.rotate(1,0,0,90);
+//		shapeRenderer.rect(float x, float y, float width, float height)
+//		shapeRenderer.rect(float x, float y, float width, float height, Color col1, Color col2, Color col3, Color col4)
+//		shapeRenderer.rect(float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float degrees)
+//		shapeRenderer.rect(float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float degrees, Color col1, Color col2, Color col3, Color col4)
+		shapeRenderer.rect(400,400,100,100);
+
+		//shapeRenderer.rect(-250, -250, 500, 500, Color.RED, Color.BLUE, Color.CYAN, Color.RED);
+		shapeRenderer.end();
 	}
 	/* Initialize actors' positions */
 	public void initActors() {
@@ -144,27 +160,33 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		});
 
 		// Each character gets one move during this turn
+		int moves = 0;
 		for (Character character : characters) {
+
 			if(character instanceof LichActor) {
 				// AI goes here
 				LichActor lichActor = (LichActor) character;
 				lichActor.fly();
 
 				lichActor.addAction(sequence(
-						moveTo(tiles.getCoord(lichActor.x+4, lichActor.y).getX(), tiles.getCoord(lichActor.x+4, lichActor.y).getY(), 3)
-						,delay(2f)
+						delay(moves*2.5f)
+						,moveTo(tiles.getCoord(lichActor.x + 4, lichActor.y).getX(), tiles.getCoord(lichActor.x + 4, lichActor.y).getY(), 2)
 				));
+				lichActor.x = lichActor.x + 4;
 
 
 			} else {
+//				for (LichActor lichActor : liches) {
+//					lichActor.stand();
+//				}
 				// player control
+				System.out.println("Player turn! " + character.toString());
+
 			}
 
 			System.out.println(character.toString());
+			moves++;
 		}
-
-
-
 		turn++;
 	}
 
