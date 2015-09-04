@@ -21,6 +21,7 @@ import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.utils.Scaling;
@@ -43,8 +44,10 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	Stage stage;
 	ArrayList<KnightActor> knights;
 	ArrayList<LichActor> liches;
+	Group squareGroup;
 
 	ShapeRenderer shapeRenderer;
+	SquareActor squareActor;
 
 	Vector3 lastTouchDown = new Vector3();
 
@@ -88,18 +91,25 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		liches.add(new LichActor("Lich4",2,11,33,50, 87));
 		liches.add(new LichActor("Lich5",3,13,30,45, 59));
 
+		squareGroup = new Group();
+		squareActor = new SquareActor();
+		squareGroup.addActor(squareActor);
+
+
+
 		initActors();
 
 		//knightActor.addAction(moveAction);
 		//knightActor.addAction(sequence(moveTo(200, 100, 2), color(com.badlogic.gdx.graphics.Color.RED, 6), delay(0.5f), rotateTo(90, 2)));
 
+		stage.addActor(squareGroup);
 		turn();
 	}
 
 	@Override
 	public void render () {
-		//Gdx.gl.glClearColor(0, 0.1f, 0.05f, 1);
-		Gdx.gl.glClearColor(0.3f, 0.6f, 0.9f, 1);
+		Gdx.gl.glClearColor(0, 0.1f, 0.05f, 1);
+		//Gdx.gl.glClearColor(0.3f, 0.6f, 0.9f, 1);
 
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_CONSTANT_ALPHA);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -110,18 +120,18 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		stage.draw();
 		stage.act(Gdx.graphics.getDeltaTime());
 
-		//shapeRenderer.setProjectionMatrix(camera.combined);
-
-		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-		//shapeRenderer.rotate(1,0,0,90);
-//		shapeRenderer.rect(float x, float y, float width, float height)
-//		shapeRenderer.rect(float x, float y, float width, float height, Color col1, Color col2, Color col3, Color col4)
-//		shapeRenderer.rect(float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float degrees)
-//		shapeRenderer.rect(float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float degrees, Color col1, Color col2, Color col3, Color col4)
-		shapeRenderer.rect(400,400,100,100);
-
-		//shapeRenderer.rect(-250, -250, 500, 500, Color.RED, Color.BLUE, Color.CYAN, Color.RED);
-		shapeRenderer.end();
+//		shapeRenderer.setProjectionMatrix(camera.combined);
+//
+//		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+//		//shapeRenderer.rotate(1,0,0,90);
+////		shapeRenderer.rect(float x, float y, float width, float height)
+////		shapeRenderer.rect(float x, float y, float width, float height, Color col1, Color col2, Color col3, Color col4)
+////		shapeRenderer.rect(float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float degrees)
+////		shapeRenderer.rect(float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float degrees, Color col1, Color col2, Color col3, Color col4)
+//		shapeRenderer.rect(400,400,40,40);
+//
+//		//shapeRenderer.rect(-250, -250, 500, 500, Color.RED, Color.BLUE, Color.CYAN, Color.RED);
+//		shapeRenderer.end();
 	}
 	/* Initialize actors' positions */
 	public void initActors() {
@@ -161,6 +171,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 
 		// Each character gets one move during this turn
 		int moves = 0;
+
 		for (Character character : characters) {
 
 			if(character instanceof LichActor) {
@@ -181,7 +192,13 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 //				}
 				// player control
 				System.out.println("Player turn! " + character.toString());
+				KnightActor knightActor = (KnightActor) character;
+				if (moves == 9) {
+					float x = tiles.getCoord(knightActor.x,knightActor.y).getX();
+					float y = tiles.getCoord(knightActor.x,knightActor.y).getY();
+					//shapeRenderer.setProjectionMatrix(camera.combined);
 
+				}
 			}
 
 			System.out.println(character.toString());
