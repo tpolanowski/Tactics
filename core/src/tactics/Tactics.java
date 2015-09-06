@@ -184,12 +184,34 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 
 			if(character instanceof LichActor) {
 				// AI goes here
-				LichActor lichActor = (LichActor) character;
-				lichActor.fly();
+				final LichActor lichActor = (LichActor) character;
+				lichActor.stand();
+//				Timer.schedule(new Timer.Task() {
+//					@Override
+//					public void run() {
+//						lichActor.stand();
+//					}
+//
+//				},13);
+				Timer.schedule(new Timer.Task() {
+					@Override
+					public void run() {
+						lichActor.fly();
+					}
+
+				},moves*2.5f);
+				Timer.schedule(new Timer.Task() {
+					@Override
+					public void run() {
+						lichActor.stand();
+					}
+
+				},moves*2.5f+2);
 				//TODO add actual AI
-				tiles.getCoord(lichActor.x,lichActor.y).setOccupied(false);
+
 				int destX = lichActor.x + 4;
 				int destY = lichActor.y;
+				tiles.getCoord(lichActor.x,lichActor.y).setOccupied(false);
 				tiles.getCoord(destX,destY).setOccupied(true);
 				lichActor.addAction(sequence(
 						delay(moves*2.5f)
