@@ -44,14 +44,15 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	Stage stage;
 	ArrayList<KnightActor> knights;
 	ArrayList<LichActor> liches;
+	ArrayList<SquareActor> squares;
 	Group squareGroup;
 
 	ShapeRenderer shapeRenderer;
-	SquareActor squareActor;
-
 	Vector3 lastTouchDown = new Vector3();
 
 	int turn = 0;
+
+	//TODO create array with occupied fields
 
 	@Override
 	public void create () {
@@ -78,6 +79,8 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 
 		knights = new ArrayList<KnightActor>(5);
 		liches = new ArrayList<LichActor>(5);
+		squares = new ArrayList<SquareActor>(24);
+		squareGroup = new Group();
 
 		knights.add(new KnightActor("Knight1",17, 5,23,43,57));
 		knights.add(new KnightActor("Knight2",16, 7,25,35,65));
@@ -91,18 +94,21 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		liches.add(new LichActor("Lich4",2,11,33,50, 87));
 		liches.add(new LichActor("Lich5",3,13,30,45, 59));
 
-		squareGroup = new Group();
-		squareActor = new SquareActor();
-		squareGroup.addActor(squareActor);
+		for(int i = 0; i < 24; i++) {
+			SquareActor squareActor = new SquareActor();
+			squareActor.setX(i);
+			squareActor.setY(i);
+			//squareActor.setVisible(false); TODO
+			squares.add(squareActor);
+			squareGroup.addActor(squareActor);
 
-
+		}
 
 		initActors();
 
 		//knightActor.addAction(moveAction);
 		//knightActor.addAction(sequence(moveTo(200, 100, 2), color(com.badlogic.gdx.graphics.Color.RED, 6), delay(0.5f), rotateTo(90, 2)));
 
-		stage.addActor(squareGroup);
 		turn();
 	}
 
@@ -197,6 +203,9 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 					float x = tiles.getCoord(knightActor.x,knightActor.y).getX();
 					float y = tiles.getCoord(knightActor.x,knightActor.y).getY();
 					//shapeRenderer.setProjectionMatrix(camera.combined);
+    				stage.addActor(squareGroup);
+
+
 
 				}
 			}

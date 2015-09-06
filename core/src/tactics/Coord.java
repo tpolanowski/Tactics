@@ -6,6 +6,16 @@ public class Coord {
     private int noX;
     private int noY;
 
+    public boolean isOccupied() {
+        return occupied;
+    }
+
+    public void setOccupied(boolean occupied) {
+        this.occupied = occupied;
+    }
+
+    private boolean occupied;
+
     public int getNoX() {
         return noX;
     }
