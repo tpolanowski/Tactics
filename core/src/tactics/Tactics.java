@@ -196,6 +196,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 						,moveTo(tiles.getCoord(destX, destY).getX(), tiles.getCoord(destX, destY).getY(), 2)
 				));
 				//lichActor.x = lichActor.x + 4; //TODO check if actions automatically change actors coords!
+				System.out.println(lichActor.x);
 
 
 			} else {
