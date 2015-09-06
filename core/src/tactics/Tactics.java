@@ -144,11 +144,13 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		for (KnightActor knightActor : knights) {
 			knightActor.addAction(moveTo(tiles.getCoord(knightActor.x,knightActor.y).getX(),tiles.getCoord(knightActor.x,knightActor.y).getY()));
 			knightActor.stand();
+			tiles.getCoord(knightActor.x,knightActor.y).setOccupied(true);
 			stage.addActor(knightActor);
 		}
 		for (LichActor lichActor : liches) {
 			lichActor.addAction(moveTo(tiles.getCoord(lichActor.x, lichActor.y).getX(), tiles.getCoord(lichActor.x, lichActor.y).getY()));
 			lichActor.stand();
+			tiles.getCoord(lichActor.x,lichActor.y).setOccupied(true);
 			stage.addActor(lichActor);
 		}
 	}
@@ -184,12 +186,16 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 				// AI goes here
 				LichActor lichActor = (LichActor) character;
 				lichActor.fly();
-
+				//TODO add actual AI
+				tiles.getCoord(lichActor.x,lichActor.y).setOccupied(false);
+				int destX = lichActor.x + 4;
+				int destY = lichActor.y;
+				tiles.getCoord(destX,destY).setOccupied(true);
 				lichActor.addAction(sequence(
 						delay(moves*2.5f)
-						,moveTo(tiles.getCoord(lichActor.x + 4, lichActor.y).getX(), tiles.getCoord(lichActor.x + 4, lichActor.y).getY(), 2)
+						,moveTo(tiles.getCoord(destX, destY).getX(), tiles.getCoord(destX, destY).getY(), 2)
 				));
-				lichActor.x = lichActor.x + 4;
+				//lichActor.x = lichActor.x + 4; //TODO check if actions automatically change actors coords!
 
 
 			} else {
