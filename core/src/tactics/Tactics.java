@@ -186,13 +186,6 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 				// AI goes here
 				final LichActor lichActor = (LichActor) character;
 				lichActor.stand();
-//				Timer.schedule(new Timer.Task() {
-//					@Override
-//					public void run() {
-//						lichActor.stand();
-//					}
-//
-//				},13);
 				Timer.schedule(new Timer.Task() {
 					@Override
 					public void run() {
@@ -222,9 +215,6 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 
 
 			} else {
-//				for (LichActor lichActor : liches) {
-//					lichActor.stand();
-//				}
 				// player control
 				System.out.println("Player turn! " + character.toString());
 				KnightActor knightActor = (KnightActor) character;
@@ -234,6 +224,112 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 					//shapeRenderer.setProjectionMatrix(camera.combined);
     				stage.addActor(squareGroup);
 
+					// displays squares for move decision, left to right, top to down
+					for(int i = 0; i < squares.size(); i++) {
+						switch (i) {
+							case 0:
+								if(!tiles.getCoord(knightActor.x-3, knightActor.y).isOccupied()) {
+
+								}
+								squares.get(i).setX(tiles.getCoord(knightActor.x-3, knightActor.y).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x-3, knightActor.y).getY());
+								break;
+							case 1:
+								squares.get(i).setX(tiles.getCoord(knightActor.x-2, knightActor.y+1).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x-2, knightActor.y+1).getY());
+								break;
+							case 2:
+								squares.get(i).setX(tiles.getCoord(knightActor.x-2, knightActor.y).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x-2, knightActor.y).getY());
+								break;
+							case 3:
+								squares.get(i).setX(tiles.getCoord(knightActor.x-2, knightActor.y-1).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x-2, knightActor.y-1).getY());
+								break;
+							case 4:
+								squares.get(i).setX(tiles.getCoord(knightActor.x-1, knightActor.y+2).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x-1, knightActor.y+2).getY());
+								break;
+							case 5:
+								squares.get(i).setX(tiles.getCoord(knightActor.x-1, knightActor.y+1).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x-1, knightActor.y+1).getY());
+								break;
+							case 6:
+								squares.get(i).setX(tiles.getCoord(knightActor.x-1, knightActor.y).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x-1, knightActor.y).getY());
+								break;
+							case 7:
+								squares.get(i).setX(tiles.getCoord(knightActor.x-1, knightActor.y-1).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x-1, knightActor.y-1).getY());
+								break;
+							case 8:
+								squares.get(i).setX(tiles.getCoord(knightActor.x-1, knightActor.y-2).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x-1, knightActor.y-2).getY());
+								break;
+							case 9:
+								squares.get(i).setX(tiles.getCoord(knightActor.x, knightActor.y+3).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x, knightActor.y+3).getY());
+								break;
+							case 10:
+								squares.get(i).setX(tiles.getCoord(knightActor.x, knightActor.y+2).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x, knightActor.y+2).getY());
+								break;
+							case 11:
+								squares.get(i).setX(tiles.getCoord(knightActor.x, knightActor.y+1).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x, knightActor.y+1).getY());
+								break;
+							case 12:
+								squares.get(i).setX(tiles.getCoord(knightActor.x, knightActor.y-1).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x, knightActor.y-1).getY());
+								break;
+							case 13:
+								squares.get(i).setX(tiles.getCoord(knightActor.x, knightActor.y-2).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x, knightActor.y-2).getY());
+								break;
+							case 14:
+								squares.get(i).setX(tiles.getCoord(knightActor.x, knightActor.y-3).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x, knightActor.y-3).getY());
+								break;
+							case 15:
+								squares.get(i).setX(tiles.getCoord(knightActor.x+1, knightActor.y+2).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x+1, knightActor.y+2).getY());
+								break;
+							case 16:
+								squares.get(i).setX(tiles.getCoord(knightActor.x+1, knightActor.y+1).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x+1, knightActor.y+1).getY());
+								break;
+							case 17:
+								squares.get(i).setX(tiles.getCoord(knightActor.x+1, knightActor.y).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x+1, knightActor.y).getY());
+								break;
+							case 18:
+								squares.get(i).setX(tiles.getCoord(knightActor.x+1, knightActor.y-1).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x+1, knightActor.y-1).getY());
+								break;
+							case 19:
+								squares.get(i).setX(tiles.getCoord(knightActor.x+1, knightActor.y-2).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x+1, knightActor.y-2).getY());
+								break;
+							case 20:
+								squares.get(i).setX(tiles.getCoord(knightActor.x+2, knightActor.y+1).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x+2, knightActor.y+1).getY());
+								break;
+							case 21:
+								squares.get(i).setX(tiles.getCoord(knightActor.x+2, knightActor.y).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x+2, knightActor.y).getY());
+								break;
+							case 22:
+								squares.get(i).setX(tiles.getCoord(knightActor.x+2, knightActor.y-1).getX());
+								squares.get(i).setY(tiles.getCoord(knightActor.x+2, knightActor.y-1).getY());
+								break;
+//							case 23:
+//								squares.get(i).setX(tiles.getCoord(knightActor.x+3, knightActor.y).getX());
+//								squares.get(i).setY(tiles.getCoord(knightActor.x+3, knightActor.y).getY());
+//								break;
+							default:
+								break;
+						}
+					}
 
 
 				}
