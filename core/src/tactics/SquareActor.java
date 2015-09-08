@@ -34,7 +34,7 @@ public class SquareActor extends Actor{
             shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
         }
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.rect(super.getX(), super.getY(), 30, 40);
+        shapeRenderer.rect(super.getX(), super.getY(), 6, 8);
         shapeRenderer.end();
 
     }

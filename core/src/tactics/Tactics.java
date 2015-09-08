@@ -96,9 +96,9 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 
 		for(int i = 0; i < 24; i++) {
 			SquareActor squareActor = new SquareActor();
-			squareActor.setX(i);
-			squareActor.setY(i);
-			//squareActor.setVisible(false); TODO
+			//squareActor.setX(i);
+			//squareActor.setY(i);
+			squareActor.setVisible(false); //TODO verify why this adds one redundant suqare at 0,0
 			squares.add(squareActor);
 			squareGroup.addActor(squareActor);
 
@@ -224,114 +224,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 					//shapeRenderer.setProjectionMatrix(camera.combined);
     				stage.addActor(squareGroup);
 
-					// displays squares for move decision, left to right, top to down
-					for(int i = 0; i < squares.size(); i++) {
-						switch (i) {
-							case 0:
-								if(!tiles.getCoord(knightActor.x-3, knightActor.y).isOccupied()) {
-
-								}
-								squares.get(i).setX(tiles.getCoord(knightActor.x-3, knightActor.y).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x-3, knightActor.y).getY());
-								break;
-							case 1:
-								squares.get(i).setX(tiles.getCoord(knightActor.x-2, knightActor.y+1).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x-2, knightActor.y+1).getY());
-								break;
-							case 2:
-								squares.get(i).setX(tiles.getCoord(knightActor.x-2, knightActor.y).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x-2, knightActor.y).getY());
-								break;
-							case 3:
-								squares.get(i).setX(tiles.getCoord(knightActor.x-2, knightActor.y-1).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x-2, knightActor.y-1).getY());
-								break;
-							case 4:
-								squares.get(i).setX(tiles.getCoord(knightActor.x-1, knightActor.y+2).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x-1, knightActor.y+2).getY());
-								break;
-							case 5:
-								squares.get(i).setX(tiles.getCoord(knightActor.x-1, knightActor.y+1).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x-1, knightActor.y+1).getY());
-								break;
-							case 6:
-								squares.get(i).setX(tiles.getCoord(knightActor.x-1, knightActor.y).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x-1, knightActor.y).getY());
-								break;
-							case 7:
-								squares.get(i).setX(tiles.getCoord(knightActor.x-1, knightActor.y-1).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x-1, knightActor.y-1).getY());
-								break;
-							case 8:
-								squares.get(i).setX(tiles.getCoord(knightActor.x-1, knightActor.y-2).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x-1, knightActor.y-2).getY());
-								break;
-							case 9:
-								squares.get(i).setX(tiles.getCoord(knightActor.x, knightActor.y+3).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x, knightActor.y+3).getY());
-								break;
-							case 10:
-								squares.get(i).setX(tiles.getCoord(knightActor.x, knightActor.y+2).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x, knightActor.y+2).getY());
-								break;
-							case 11:
-								squares.get(i).setX(tiles.getCoord(knightActor.x, knightActor.y+1).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x, knightActor.y+1).getY());
-								break;
-							case 12:
-								squares.get(i).setX(tiles.getCoord(knightActor.x, knightActor.y-1).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x, knightActor.y-1).getY());
-								break;
-							case 13:
-								squares.get(i).setX(tiles.getCoord(knightActor.x, knightActor.y-2).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x, knightActor.y-2).getY());
-								break;
-							case 14:
-								squares.get(i).setX(tiles.getCoord(knightActor.x, knightActor.y-3).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x, knightActor.y-3).getY());
-								break;
-							case 15:
-								squares.get(i).setX(tiles.getCoord(knightActor.x+1, knightActor.y+2).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x+1, knightActor.y+2).getY());
-								break;
-							case 16:
-								squares.get(i).setX(tiles.getCoord(knightActor.x+1, knightActor.y+1).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x+1, knightActor.y+1).getY());
-								break;
-							case 17:
-								squares.get(i).setX(tiles.getCoord(knightActor.x+1, knightActor.y).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x+1, knightActor.y).getY());
-								break;
-							case 18:
-								squares.get(i).setX(tiles.getCoord(knightActor.x+1, knightActor.y-1).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x+1, knightActor.y-1).getY());
-								break;
-							case 19:
-								squares.get(i).setX(tiles.getCoord(knightActor.x+1, knightActor.y-2).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x+1, knightActor.y-2).getY());
-								break;
-							case 20:
-								squares.get(i).setX(tiles.getCoord(knightActor.x+2, knightActor.y+1).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x+2, knightActor.y+1).getY());
-								break;
-							case 21:
-								squares.get(i).setX(tiles.getCoord(knightActor.x+2, knightActor.y).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x+2, knightActor.y).getY());
-								break;
-							case 22:
-								squares.get(i).setX(tiles.getCoord(knightActor.x+2, knightActor.y-1).getX());
-								squares.get(i).setY(tiles.getCoord(knightActor.x+2, knightActor.y-1).getY());
-								break;
-//							case 23:
-//								squares.get(i).setX(tiles.getCoord(knightActor.x+3, knightActor.y).getX());
-//								squares.get(i).setY(tiles.getCoord(knightActor.x+3, knightActor.y).getY());
-//								break;
-							default:
-								break;
-						}
-					}
-
-
+					displayRange(knightActor);
 				}
 			}
 
@@ -341,6 +234,115 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		turn++;
 	}
 
+	// displays squares for move decision, left to right, top to down
+	private void displayRange (KnightActor knightActor) {
+		int x = tiles.getCoord(knightActor.x,knightActor.y).getNoX();
+		int y = tiles.getCoord(knightActor.x,knightActor.y).getNoY();
+
+		for(int i = 0; i < squares.size(); i++) {
+			switch (i) {
+				case 0:
+					displaySquare(squares.get(i), x-3, y);
+					break;
+				case 1:
+					displaySquare(squares.get(i), x-2, y+1);
+					break;
+				case 2:
+					displaySquare(squares.get(i), x-2, y);
+					break;
+				case 3:
+					displaySquare(squares.get(i), x-2, y-1);
+					break;
+				case 4:
+					displaySquare(squares.get(i), x-1, y+2);
+					break;
+				case 5:
+					displaySquare(squares.get(i), x-1, y+1);
+					break;
+				case 6:
+					displaySquare(squares.get(i), x-1, y);
+					break;
+				case 7:
+					displaySquare(squares.get(i), x-1, y-1);
+					break;
+				case 8:
+					displaySquare(squares.get(i), x-1, y-2);
+					break;
+				case 9:
+					displaySquare(squares.get(i), x, y+3);
+					break;
+				case 10:
+					displaySquare(squares.get(i), x, y+2);
+					break;
+				case 11:
+					displaySquare(squares.get(i), x, y+1);
+					break;
+				case 12:
+					displaySquare(squares.get(i), x, y-1);
+					break;
+				case 13:
+					displaySquare(squares.get(i), x, y-2);
+					break;
+				case 14:
+					displaySquare(squares.get(i), x, y-3);
+					break;
+				case 15:
+					displaySquare(squares.get(i), x+1, y+2);
+					break;
+				case 16:
+					displaySquare(squares.get(i), x+1, y+1);
+					break;
+				case 17:
+					displaySquare(squares.get(i), x+1, y);
+					break;
+				case 18:
+					displaySquare(squares.get(i), x+1, y-1);
+					break;
+				case 19:
+					displaySquare(squares.get(i), x+1, y-2);
+					break;
+				case 20:
+					displaySquare(squares.get(i), x+2, y+1);
+					break;
+				case 21:
+					displaySquare(squares.get(i), x+2, y);
+					break;
+				case 22:
+					displaySquare(squares.get(i), x+2, y-1);
+					break;
+				case 23:
+					displaySquare(squares.get(i), x+3, y);
+					break;
+				default:
+					break;
+			}
+		}
+
+	}
+
+	private void hideRange () {
+		for (SquareActor squareActor : squares) {
+			squareActor.setVisible(false);
+		}
+	}
+
+	private void displaySquare (SquareActor squareActor, int x, int y) {
+		if (isRangeAvailable(x, y) == true) {
+			squareActor.setX(tiles.getCoord(x, y).getX());
+			squareActor.setY(tiles.getCoord(x, y).getY());
+			squareActor.setVisible(true);
+		}
+		else {
+			squareActor.setVisible(false);
+		}
+	}
+
+	private boolean isRangeAvailable (int x, int y) {
+		if (x > 0 && x < 20 && y > 0 && y < 20 && tiles.getCoord(x, y).isOccupied() == false) {
+			return true;
+		}
+		return false;
+	}
 	/**
 	 * Called when a key was pressed
 	 *
