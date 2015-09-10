@@ -328,8 +328,8 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 
 	private void displaySquare (SquareActor squareActor, int x, int y) {
 		if (isRangeAvailable(x, y) == true) {
-			squareActor.setX(tiles.getCoord(x, y).getX());
-			squareActor.setY(tiles.getCoord(x, y).getY());
+			squareActor.setX(tiles.getCoord(x, y).getX()+15);
+			squareActor.setY(tiles.getCoord(x, y).getY()+5);
 			squareActor.setVisible(true);
 		}
 		else {
@@ -407,6 +407,13 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	 */
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		System.out.println("Click at: " + screenX + ", " + screenY);
+		System.out.println("Square0: " + squares.get(0).getX() + ", " + squares.get(0).getY());
+		System.out.println("Square0 size: " + squares.get(0).getHeight() + ", " + squares.get(0).getWidth());
+
+		Actor hitActor = stage.hit(screenX,screenY,false);
+		if(hitActor != null)
+			System.out.println("HIT "+ hitActor.getName());
 		return false;
 	}
 
