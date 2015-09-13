@@ -129,19 +129,8 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		stage.draw();
 		stage.act(Gdx.graphics.getDeltaTime());
 		turn();
-//		shapeRenderer.setProjectionMatrix(camera.combined);
-//
-//		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-//		//shapeRenderer.rotate(1,0,0,90);
-////		shapeRenderer.rect(float x, float y, float width, float height)
-////		shapeRenderer.rect(float x, float y, float width, float height, Color col1, Color col2, Color col3, Color col4)
-////		shapeRenderer.rect(float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float degrees)
-////		shapeRenderer.rect(float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float degrees, Color col1, Color col2, Color col3, Color col4)
-//		shapeRenderer.rect(400,400,40,40);
-//
-//		//shapeRenderer.rect(-250, -250, 500, 500, Color.RED, Color.BLUE, Color.CYAN, Color.RED);
-//		shapeRenderer.end();
 	}
+
 	/* Initialize actors' positions */
 	public void initActors() {
 		for (KnightActor knightActor : knights) {
@@ -159,6 +148,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		stage.addActor(squareGroup);
 	}
 
+	/* Init turn, sort characters */
 	public void prepareNewTurn() {
 		moves = 0;
 		for (KnightActor knightActor : knights) {
@@ -172,7 +162,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 			public int compare(Character character1, Character character2) {
 				if (character1.getSpeed() > character2.getSpeed()) {
 					return -1;
-				} else if (character1.getSpeed() < character2.getSpeed()){
+				} else if (character1.getSpeed() < character2.getSpeed()) {
 					return 1;
 				} else {
 					return 0;
@@ -181,8 +171,10 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		});
 	}
 
+	/* Liches moved by AI */
 	public void moveLiches() {
 		int moves = 0;
+		Random random = new Random();
 		for(final LichActor lichActor : liches) {
 			lichActor.stand();
 			Timer.schedule(new Timer.Task() {
@@ -203,7 +195,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 			// AI
 			int destX;
 			int destY;
-			KnightActor target = lookForTarget(lichActor);
+			KnightActor target = lookForTarget(lichActor, 5);
 			if (target != null) {
 				if(!tiles.getCoord(target.x,target.y-1).isOccupied()) {
 					destX = target.x;
@@ -223,7 +215,6 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 				}
 			}
 			else {
-				Random random = new Random();
 				int rand1 = random.nextInt(1)-1;
 				destX = lichActor.x + 4;
 				destY = lichActor.y + rand1;
@@ -238,20 +229,73 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 			lichActor.x = destX;
 			lichActor.y = destY;
 			moves++;
+
+			// Attack if possible
+			if(target != null) {
+				Timer.schedule(new Timer.Task() {
+					@Override
+					public void run() {
+						lichActor.attack();
+					}
+
+				},moves*2.5f+2);
+				Timer.schedule(new Timer.Task() {
+					@Override
+					public void run() {
+						lichActor.stand();
+					}
+
+				},moves*2.5f+5);
+				int damage = lichActor.strength + random.nextInt(20);
+				target.setHealth(target.getHealth() - damage);
+				System.out.println(lichActor.getName() + " deals " + damage + " to " + target.getName());
+				checkForDeadCharacters();
+			}
 		}
 	}
 
-	public KnightActor lookForTarget(LichActor lichActor) {
+	/* Find nearest target in the given range */
+	public KnightActor lookForTarget(LichActor lichActor, int range) {
 		int x = lichActor.x;
 		int y = lichActor.y;
 		for(KnightActor knightActor : knights) {
-			if (Math.abs(x-knightActor.x) < 5 && Math.abs(y-knightActor.y) < 5 ) {
+			if (Math.abs(x-knightActor.x) < range && Math.abs(y-knightActor.y) < range ) {
 				return knightActor;
 			}
 		}
 		return null;
 	}
 
+	/* Find nearest target in the given range */
+	public LichActor lookForTarget(KnightActor knightActor, int range) {
+		int x = knightActor.x;
+		int y = knightActor.y;
+		for(LichActor lichActor : liches) {
+			if (Math.abs(x-lichActor.x) < range && Math.abs(y-lichActor.y) < range ) {
+				return lichActor;
+			}
+		}
+		return null;
+	}
+
+	public void checkForDeadCharacters() {
+		for (LichActor lichActor : liches) {
+			lichActor.checkIfAlive();
+			if (!lichActor.alive) {
+				System.out.println("Found dead character: " + lichActor.getName());
+				lichActor.setVisible(false);
+			}
+		}
+		for (KnightActor knightActor : knights) {
+			knightActor.checkIfAlive();
+			if (!knightActor.alive) {
+				System.out.println("Found dead character: " + knightActor.getName());
+				knightActor.setVisible(false);
+			}
+		}
+	}
+
+	/* Turn engine main function */
 	public void turn() {
 		if(startNewTurn) {
 			startNewTurn = false;
@@ -267,6 +311,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		}
 	}
 
+	/* Knight moved by player */
 	private void moveKnight() {
 
 		movedKnight.stand();
@@ -301,6 +346,33 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 				delay(2.5f)
 				,moveTo(tiles.getCoord(destX, destY).getX(), tiles.getCoord(destX, destY).getY(), 2)
 		));
+		movedKnight.x = destX;
+		movedKnight.y = destY;
+
+		LichActor target = lookForTarget(movedKnight,1);
+		Random random = new Random();
+		
+		// Attack if possible
+		if(target != null) {
+			Timer.schedule(new Timer.Task() {
+				@Override
+				public void run() {
+					movedKnight.attack();
+				}
+
+			},moves*2.5f+2);
+			Timer.schedule(new Timer.Task() {
+				@Override
+				public void run() {
+					movedKnight.stand();
+				}
+
+			},moves*2.5f+5);
+			int damage = movedKnight.strength + random.nextInt(20);
+			target.setHealth(target.getHealth() - damage);
+			System.out.println(movedKnight.getName() + " deals " + damage + " to " + target.getName());
+			checkForDeadCharacters();
+		}
 	}
 
 	// displays squares for move decision, left to right, top to down

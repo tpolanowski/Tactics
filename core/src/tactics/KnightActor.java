@@ -30,6 +30,8 @@ public class KnightActor extends Image implements Character{
     public int strength;
     public int health;
 
+    public boolean alive = true;
+
     static {
         initAnimations();
     }
@@ -178,5 +180,12 @@ public class KnightActor extends Image implements Character{
                 ", health=" + health +
                 ", strength=" + strength +
                 '}';
+    }
+
+    @Override
+    public void checkIfAlive() {
+        if (health < 1) {
+            alive = false;
+        }
     }
 }

@@ -10,4 +10,5 @@ public interface Character {
     public void setHealth(int health);
     public String toString();
     public boolean moved = false;
+    public void checkIfAlive();
 }
