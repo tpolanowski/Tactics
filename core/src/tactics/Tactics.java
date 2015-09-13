@@ -55,6 +55,8 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	int turn = 0;
 	int moves = 0;
 
+	int debugClicks = 0;
+
 	@Override
 	public void create () {
 		tiles = new Tiles(810, 800, 20);
@@ -575,6 +577,15 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 				hideRange();
 				moveKnight();
 			}
+		}
+
+		// TODO  until mapping is fixed, after third click make a move
+		debugClicks++;
+		if(debugClicks > 2 && turn < 2) {
+			debugClicks = 0;
+			chosenSquare = squares.get(2);
+			hideRange();
+			moveKnight();
 		}
 		return false;
 	}
