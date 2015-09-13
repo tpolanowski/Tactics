@@ -2,7 +2,6 @@ package tactics;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class SquareActor extends Actor{
@@ -32,8 +31,8 @@ public class SquareActor extends Actor{
         shapeRenderer = new ShapeRenderer();
         //shapeRenderer.setProjectionMatrix(cameraCombined);
         projectionMatrixSet = false;
-        super.setWidth(40);
-        super.setHeight(30);
+        super.setWidth(50);
+        super.setHeight(40);
     }
 
     /**
@@ -45,7 +44,7 @@ public class SquareActor extends Actor{
      * <p/>
      * The default implementation does nothing.
      *
-     * @param batch
+     * @param batch batch
      * @param parentAlpha Should be multiplied with the actor's alpha, allowing a parent's alpha to affect all children.
      */
     @Override

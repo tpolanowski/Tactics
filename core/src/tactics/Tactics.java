@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Random;
 
 public class Tactics extends ApplicationAdapter implements InputProcessor{
 	TiledMap tiledMap;
@@ -198,20 +199,57 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 				}
 
 			},moves*2.5f+2);
-			//TODO add actual AI
 
-			int destX = lichActor.x + 4;
-			int destY = lichActor.y;
+			// AI
+			int destX;
+			int destY;
+			KnightActor target = lookForTarget(lichActor);
+			if (target != null) {
+				if(!tiles.getCoord(target.x,target.y-1).isOccupied()) {
+					destX = target.x;
+					destY = target.y-1;
+				}
+				else if(!tiles.getCoord(target.x,target.y+1).isOccupied()) {
+					destX = target.x;
+					destY = target.y+1;
+				}
+				else if(!tiles.getCoord(target.x-1,target.y).isOccupied()) {
+					destX = target.x-1;
+					destY = target.y;
+				}
+				else {
+					destX = target.x+1;
+					destY = target.y;
+				}
+			}
+			else {
+				Random random = new Random();
+				int rand1 = random.nextInt(1)-1;
+				destX = lichActor.x + 4;
+				destY = lichActor.y + rand1;
+			}
+
 			tiles.getCoord(lichActor.x,lichActor.y).setOccupied(false);
 			tiles.getCoord(destX,destY).setOccupied(true);
 			lichActor.addAction(sequence(
-					delay(moves*2.5f)
-					,moveTo(tiles.getCoord(destX, destY).getX(), tiles.getCoord(destX, destY).getY(), 2)
+					delay(moves * 2.5f)
+					, moveTo(tiles.getCoord(destX, destY).getX(), tiles.getCoord(destX, destY).getY(), 2)
 			));
+			lichActor.x = destX;
+			lichActor.y = destY;
 			moves++;
-			//lichActor.x = lichActor.x + 4; //TODO check if actions automatically change actors coords!
-			//System.out.println(lichActor.x);
 		}
+	}
+
+	public KnightActor lookForTarget(LichActor lichActor) {
+		int x = lichActor.x;
+		int y = lichActor.y;
+		for(KnightActor knightActor : knights) {
+			if (Math.abs(x-knightActor.x) < 5 && Math.abs(y-knightActor.y) < 5 ) {
+				return knightActor;
+			}
+		}
+		return null;
 	}
 
 	public void turn() {
@@ -254,7 +292,6 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 			}
 
 		},2.5f+2);
-		//TODO add actual AI
 
 		int destX = chosenSquare.getxNo();
 		int destY = chosenSquare.getyNo();
