@@ -65,7 +65,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false,w/1.5f,h);
 
-		tiledMap = new TmxMapLoader().load("test.tmx");
+		tiledMap = new TmxMapLoader().load("map.tmx");
 		tiledMapRenderer = new IsometricTiledMapRenderer(tiledMap);
 		Gdx.input.setInputProcessor(this);
 
@@ -101,9 +101,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 
 		for(int i = 0; i < 24; i++) {
 			SquareActor squareActor = new SquareActor();
-			//squareActor.setX(i);
-			//squareActor.setY(i);
-			squareActor.setVisible(false); //TODO verify why this adds one redundant suqare at 0,0
+			squareActor.setVisible(false);
 			squares.add(squareActor);
 			squareGroup.addActor(squareActor);
 
@@ -349,9 +347,9 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		movedKnight.x = destX;
 		movedKnight.y = destY;
 
-		LichActor target = lookForTarget(movedKnight,1);
+		LichActor target = lookForTarget(movedKnight, 2);
 		Random random = new Random();
-		
+
 		// Attack if possible
 		if(target != null) {
 			Timer.schedule(new Timer.Task() {
@@ -637,7 +635,6 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 
 	private void moveCamera(int touchX, int touchY) {
 		Vector3 newPosition = getNewCameraPosition(touchX, touchY);
-		//if( !cameraOutOfLimit( newPosition ) ) //TODO debug
 		stage.getCamera().translate( newPosition.sub( stage.getCamera().position ) );
 
 		lastTouchDown.set( touchX, touchY, 0);
