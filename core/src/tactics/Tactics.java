@@ -50,9 +50,14 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	ShapeRenderer shapeRenderer;
 	Vector3 lastTouchDown = new Vector3();
 
-	int turn = 0;
+	boolean scrollEnabled = false;
+	float initZoomHeight;
+	float initZoomWidth;
 
-	//TODO create array with occupied fields
+	Vector3 initPosition = new Vector3();
+
+
+	int turn = 0;
 
 	@Override
 	public void create () {
@@ -75,8 +80,12 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		camera.translate(-50,-430);
 		camera.update();
 
-		// Actors
+		// Get init camera position - it will be restored when zoom&scroll are done
+		initPosition   = stage.getCamera().position.cpy();
+		initZoomWidth  = stage.getCamera().viewportWidth;
+		initZoomHeight = stage.getCamera().viewportHeight;
 
+		// Actors
 		knights = new ArrayList<KnightActor>(5);
 		liches = new ArrayList<LichActor>(5);
 		squares = new ArrayList<SquareActor>(24);
@@ -362,26 +371,37 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	 */
 	@Override
 	public boolean keyUp(int keycode) {
-		if(keycode == Input.Keys.LEFT)
-			camera.translate(-64,0);
-		if(keycode == Input.Keys.RIGHT)
-			camera.translate(64,0);
-		if(keycode == Input.Keys.UP)
-			camera.translate(0,64);
-		if(keycode == Input.Keys.DOWN)
-			camera.translate(0,-64);
-		if(keycode == Input.Keys.A)
-			camera.translate(-64,0);
-		if(keycode == Input.Keys.D)
-			camera.translate(64,0);
-		if(keycode == Input.Keys.W)
-			camera.translate(0,64);
-		if(keycode == Input.Keys.S)
-			camera.translate(0,-64);
+		// Debug mode controls
+		if(scrollEnabled) {
+			if (keycode == Input.Keys.LEFT)
+				camera.translate(-64, 0);
+			if (keycode == Input.Keys.RIGHT)
+				camera.translate(64, 0);
+			if (keycode == Input.Keys.UP)
+				camera.translate(0, 64);
+			if (keycode == Input.Keys.DOWN)
+				camera.translate(0, -64);
+			if (keycode == Input.Keys.A)
+				camera.translate(-64, 0);
+			if (keycode == Input.Keys.D)
+				camera.translate(64, 0);
+			if (keycode == Input.Keys.W)
+				camera.translate(0, 64);
+			if (keycode == Input.Keys.S)
+				camera.translate(0, -64);
+		}
 		if(keycode == Input.Keys.NUM_1)
 			tiledMap.getLayers().get(0).setVisible(!tiledMap.getLayers().get(0).isVisible());
 		if(keycode == Input.Keys.NUM_2)
 			tiledMap.getLayers().get(1).setVisible(!tiledMap.getLayers().get(1).isVisible());
+		if(keycode == Input.Keys.NUM_3) {
+			if(scrollEnabled) {
+				stage.getCamera().position.set(initPosition);
+				stage.getCamera().viewportWidth  = initZoomWidth;
+				stage.getCamera().viewportHeight = initZoomHeight;
+			}
+			scrollEnabled = !scrollEnabled;
+		}
 		return false;
 	}
 
@@ -408,10 +428,13 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		System.out.println("Click at: " + screenX + ", " + screenY);
-		System.out.println("Square0: " + squares.get(0).getX() + ", " + squares.get(0).getY());
+//		for(SquareActor squareActor : squares) {
+//			System.out.println(squareActor.getName() + ": " + squareActor.getX() + ", " + squareActor.getY());
+//		}
 		System.out.println("Square0 size: " + squares.get(0).getHeight() + ", " + squares.get(0).getWidth());
 
 		Actor hitActor = stage.hit(screenX,screenY,false);
+
 		if(hitActor != null)
 			System.out.println("HIT "+ hitActor.getName());
 		return false;
@@ -439,7 +462,8 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	 */
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		moveCamera(screenX-1280/2, screenY-720/2);
+		if(scrollEnabled)
+			moveCamera(screenX-1280/2, screenY-720/2);
 		return false;
 	}
 
@@ -463,8 +487,10 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	 */
 	@Override
 	public boolean scrolled(int amount) {
-		stage.getCamera().viewportWidth = stage.getCamera().viewportWidth + 20*amount;
-		stage.getCamera().viewportHeight = stage.getCamera().viewportHeight + 20*amount;
+		if(scrollEnabled) {
+			stage.getCamera().viewportWidth = stage.getCamera().viewportWidth + 20*amount;
+			stage.getCamera().viewportHeight = stage.getCamera().viewportHeight + 20*amount;
+		}
 		return false;
 	}
 
