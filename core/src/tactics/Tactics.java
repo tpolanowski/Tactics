@@ -86,16 +86,16 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		squares = new ArrayList<SquareActor>(24);
 		squareGroup = new Group();
 
-		knights.add(new KnightActor("Knight1",17, 5,23,43,57));
-		knights.add(new KnightActor("Knight2",16, 7,25,35,65));
 		knights.add(new KnightActor("Knight3",17, 9,27,47,86));
+		knights.add(new KnightActor("Knight2",16, 7,25,35,65));
 		knights.add(new KnightActor("Knight4",16,11,24,39,64));
+		knights.add(new KnightActor("Knight1",17, 5,23,43,57));
 		knights.add(new KnightActor("Knight5",17,13,19,40,49));
 
 		liches.add(new LichActor("Lich3",3, 9,34,54,107));
+		liches.add(new LichActor("Lich4",2,11,33,50, 87));
 		liches.add(new LichActor("Lich2",2, 7,32,48, 71));
 		liches.add(new LichActor("Lich1",3, 5,31,45, 65));
-		liches.add(new LichActor("Lich4",2,11,33,50, 87));
 		liches.add(new LichActor("Lich5",3,13,30,45, 59));
 
 		for(int i = 0; i < 24; i++) {
@@ -230,8 +230,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	}
 
 	private void moveKnight() {
-		float x = tiles.getCoord(movedKnight.x,movedKnight.y).getX();
-		float y = tiles.getCoord(movedKnight.x,movedKnight.y).getY();
+
 		movedKnight.stand();
 		Timer.schedule(new Timer.Task() {
 			@Override
@@ -249,6 +248,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 					moves++;
 				}
 				else {
+					turn++;
 					startNewTurn = true;
 				}
 			}
@@ -360,7 +360,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	}
 
 	private void displaySquare (SquareActor squareActor, int x, int y) {
-		if (isRangeAvailable(x, y) == true) {
+		if (isRangeAvailable(x, y)) {
 			squareActor.setX(tiles.getCoord(x, y).getX()+15);
 			squareActor.setY(tiles.getCoord(x, y).getY()+5);
 			squareActor.setxNo(x);
@@ -373,10 +373,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	}
 
 	private boolean isRangeAvailable (int x, int y) {
-		if (x > 0 && x < 20 && y > 0 && y < 20 && tiles.getCoord(x, y).isOccupied() == false) {
-			return true;
-		}
-		return false;
+		return x > 0 && x < 20 && y > 0 && y < 20 && !tiles.getCoord(x, y).isOccupied();
 	}
 	/**
 	 * Called when a key was pressed
@@ -478,8 +475,8 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	/**
 	 * Called when a finger was lifted or a mouse button was released. The button parameter will be  on iOS.
 	 *
-	 * @param screenX
-	 * @param screenY
+	 * @param screenX x
+	 * @param screenY y
 	 * @param pointer the pointer for the event.
 	 * @param button  the button   @return whether the input was processed
 	 */
@@ -491,8 +488,8 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	/**
 	 * Called when a finger or the mouse was dragged.
 	 *
-	 * @param screenX
-	 * @param screenY
+	 * @param screenX x
+	 * @param screenY y
 	 * @param pointer the pointer for the event.  @return whether the input was processed
 	 */
 	@Override
@@ -505,8 +502,8 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	/**
 	 * Called when the mouse was moved without any buttons being pressed. Will not be called on iOS.
 	 *
-	 * @param screenX
-	 * @param screenY
+	 * @param screenX x
+	 * @param screenY y
 	 * @return whether the input was processed
 	 */
 	@Override
@@ -545,17 +542,17 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 
 		return newPosition;
 	}
-	private boolean cameraOutOfLimit( Vector3 position ) {
-		int x_left_limit = 1280 / 2;
-		int x_right_limit = 1000 - 1280 / 2;
-		int y_bottom_limit = 720 / 2;
-		int y_top_limit = 1000 - 720 / 2;
-
-		if( position.x < x_left_limit || position.x > x_right_limit )
-			return true;
-		else if( position.y < y_bottom_limit || position.y > y_top_limit )
-			return true;
-		else
-			return false;
-	}
+//	private boolean cameraOutOfLimit( Vector3 position ) {
+//		int x_left_limit = 1280 / 2;
+//		int x_right_limit = 1000 - 1280 / 2;
+//		int y_bottom_limit = 720 / 2;
+//		int y_top_limit = 1000 - 720 / 2;
+//
+//		if( position.x < x_left_limit || position.x > x_right_limit )
+//			return true;
+//		else if( position.y < y_bottom_limit || position.y > y_top_limit )
+//			return true;
+//		else
+//			return false;
+//	}
 }
