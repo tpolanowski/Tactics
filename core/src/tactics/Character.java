@@ -9,4 +9,5 @@ public interface Character {
     public int getHealth();
     public void setHealth(int health);
     public String toString();
+    public boolean moved = false;
 }

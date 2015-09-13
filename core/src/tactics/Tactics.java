@@ -2,34 +2,23 @@ package tactics;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
-import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.viewport.ScalingViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +35,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	ArrayList<LichActor> liches;
 	ArrayList<SquareActor> squares;
 	Group squareGroup;
+	ArrayList<Character> movableCharacters;
 
 	ShapeRenderer shapeRenderer;
 	Vector3 lastTouchDown = new Vector3();
@@ -56,8 +46,13 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 
 	Vector3 initPosition = new Vector3();
 
+	KnightActor movedKnight;
+	SquareActor chosenSquare;
 
+	boolean moveReady = true;
+	boolean startNewTurn = true;
 	int turn = 0;
+	int moves = 0;
 
 	@Override
 	public void create () {
@@ -97,9 +92,9 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		knights.add(new KnightActor("Knight4",16,11,24,39,64));
 		knights.add(new KnightActor("Knight5",17,13,19,40,49));
 
-		liches.add(new LichActor("Lich1",3, 5,31,45, 65));
-		liches.add(new LichActor("Lich2",2, 7,32,48, 71));
 		liches.add(new LichActor("Lich3",3, 9,34,54,107));
+		liches.add(new LichActor("Lich2",2, 7,32,48, 71));
+		liches.add(new LichActor("Lich1",3, 5,31,45, 65));
 		liches.add(new LichActor("Lich4",2,11,33,50, 87));
 		liches.add(new LichActor("Lich5",3,13,30,45, 59));
 
@@ -115,10 +110,8 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 
 		initActors();
 
-		//knightActor.addAction(moveAction);
-		//knightActor.addAction(sequence(moveTo(200, 100, 2), color(com.badlogic.gdx.graphics.Color.RED, 6), delay(0.5f), rotateTo(90, 2)));
+		movableCharacters = new ArrayList<Character>(knights.size() + liches.size());
 
-		turn();
 	}
 
 	@Override
@@ -134,7 +127,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 
 		stage.draw();
 		stage.act(Gdx.graphics.getDeltaTime());
-
+		turn();
 //		shapeRenderer.setProjectionMatrix(camera.combined);
 //
 //		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -162,18 +155,18 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 			tiles.getCoord(lichActor.x,lichActor.y).setOccupied(true);
 			stage.addActor(lichActor);
 		}
+		stage.addActor(squareGroup);
 	}
 
-	public void turn() {
-		ArrayList<Character> characters = new ArrayList<Character>(knights.size() + liches.size());
+	public void prepareNewTurn() {
+		moves = 0;
 		for (KnightActor knightActor : knights) {
-			characters.add(knightActor);
+			movableCharacters.add(knightActor);
 		}
 		for (LichActor lichActor : liches) {
-			characters.add(lichActor);
+			movableCharacters.add(lichActor);
 		}
-
-		Collections.sort(characters, new Comparator<Character>() {
+		Collections.sort(movableCharacters, new Comparator<Character>() {
 			@Override
 			public int compare(Character character1, Character character2) {
 				if (character1.getSpeed() > character2.getSpeed()) {
@@ -185,62 +178,92 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 				}
 			}
 		});
+	}
 
-		// Each character gets one move during this turn
+	public void moveLiches() {
 		int moves = 0;
+		for(final LichActor lichActor : liches) {
+			lichActor.stand();
+			Timer.schedule(new Timer.Task() {
+				@Override
+				public void run() {
+					lichActor.fly();
+				}
 
-		for (Character character : characters) {
+			},moves*2.5f);
+			Timer.schedule(new Timer.Task() {
+				@Override
+				public void run() {
+					lichActor.stand();
+				}
 
-			if(character instanceof LichActor) {
-				// AI goes here
-				final LichActor lichActor = (LichActor) character;
-				lichActor.stand();
-				Timer.schedule(new Timer.Task() {
-					@Override
-					public void run() {
-						lichActor.fly();
-					}
+			},moves*2.5f+2);
+			//TODO add actual AI
 
-				},moves*2.5f);
-				Timer.schedule(new Timer.Task() {
-					@Override
-					public void run() {
-						lichActor.stand();
-					}
+			int destX = lichActor.x + 4;
+			int destY = lichActor.y;
+			tiles.getCoord(lichActor.x,lichActor.y).setOccupied(false);
+			tiles.getCoord(destX,destY).setOccupied(true);
+			lichActor.addAction(sequence(
+					delay(moves*2.5f)
+					,moveTo(tiles.getCoord(destX, destY).getX(), tiles.getCoord(destX, destY).getY(), 2)
+			));
+			moves++;
+			//lichActor.x = lichActor.x + 4; //TODO check if actions automatically change actors coords!
+			//System.out.println(lichActor.x);
+		}
+	}
 
-				},moves*2.5f+2);
-				//TODO add actual AI
+	public void turn() {
+		if(startNewTurn) {
+			startNewTurn = false;
+			moves = 0;
+			prepareNewTurn();
+			moveLiches();
+		}
+		else if(moveReady){
+			moveReady = false;
+			movedKnight = knights.get(moves);
+			System.out.println("Moving "+ movedKnight.getName() + ", moves=" + moves);
+			displayRange(movedKnight);
+		}
+	}
 
-				int destX = lichActor.x + 4;
-				int destY = lichActor.y;
-				tiles.getCoord(lichActor.x,lichActor.y).setOccupied(false);
-				tiles.getCoord(destX,destY).setOccupied(true);
-				lichActor.addAction(sequence(
-						delay(moves*2.5f)
-						,moveTo(tiles.getCoord(destX, destY).getX(), tiles.getCoord(destX, destY).getY(), 2)
-				));
-				//lichActor.x = lichActor.x + 4; //TODO check if actions automatically change actors coords!
-				System.out.println(lichActor.x);
+	private void moveKnight() {
+		float x = tiles.getCoord(movedKnight.x,movedKnight.y).getX();
+		float y = tiles.getCoord(movedKnight.x,movedKnight.y).getY();
+		movedKnight.stand();
+		Timer.schedule(new Timer.Task() {
+			@Override
+			public void run() {
+				movedKnight.walk();
+			}
 
-
-			} else {
-				// player control
-				System.out.println("Player turn! " + character.toString());
-				KnightActor knightActor = (KnightActor) character;
-				if (moves == 9) {
-					float x = tiles.getCoord(knightActor.x,knightActor.y).getX();
-					float y = tiles.getCoord(knightActor.x,knightActor.y).getY();
-					//shapeRenderer.setProjectionMatrix(camera.combined);
-    				stage.addActor(squareGroup);
-
-					displayRange(knightActor);
+		},2.5f);
+		Timer.schedule(new Timer.Task() {
+			@Override
+			public void run() {
+				movedKnight.stand();
+				moveReady = true;
+				if(moves < 4) {
+					moves++;
+				}
+				else {
+					startNewTurn = true;
 				}
 			}
 
-			System.out.println(character.toString());
-			moves++;
-		}
-		turn++;
+		},2.5f+2);
+		//TODO add actual AI
+
+		int destX = chosenSquare.getxNo();
+		int destY = chosenSquare.getyNo();
+		tiles.getCoord(movedKnight.x,movedKnight.y).setOccupied(false);
+		tiles.getCoord(destX,destY).setOccupied(true);
+		movedKnight.addAction(sequence(
+				delay(2.5f)
+				,moveTo(tiles.getCoord(destX, destY).getX(), tiles.getCoord(destX, destY).getY(), 2)
+		));
 	}
 
 	// displays squares for move decision, left to right, top to down
@@ -249,6 +272,7 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		int y = tiles.getCoord(knightActor.x,knightActor.y).getNoY();
 
 		for(int i = 0; i < squares.size(); i++) {
+			squares.get(i).setName("square" + i);
 			switch (i) {
 				case 0:
 					displaySquare(squares.get(i), x-3, y);
@@ -339,6 +363,8 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 		if (isRangeAvailable(x, y) == true) {
 			squareActor.setX(tiles.getCoord(x, y).getX()+15);
 			squareActor.setY(tiles.getCoord(x, y).getY()+5);
+			squareActor.setxNo(x);
+			squareActor.setyNo(y);
 			squareActor.setVisible(true);
 		}
 		else {
@@ -427,16 +453,25 @@ public class Tactics extends ApplicationAdapter implements InputProcessor{
 	 */
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		float xMapping = 0.71f; //TODO find better mapping
+		float yMapping = 0.45f;
 		System.out.println("Click at: " + screenX + ", " + screenY);
+		System.out.println("Mapping : " + screenX*xMapping+20 + ", " + screenY*yMapping+20);
 //		for(SquareActor squareActor : squares) {
 //			System.out.println(squareActor.getName() + ": " + squareActor.getX() + ", " + squareActor.getY());
 //		}
-		System.out.println("Square0 size: " + squares.get(0).getHeight() + ", " + squares.get(0).getWidth());
+		SquareActor sa = squares.get(0);
+		System.out.println(sa.getName() + ": " + sa.getX() + ", " + sa.getY() + ", " + sa.getWidth());
 
-		Actor hitActor = stage.hit(screenX,screenY,false);
-
-		if(hitActor != null)
+		Actor hitActor = stage.hit(screenX*xMapping+20, screenY*xMapping+20, false);
+		if(hitActor != null) {
 			System.out.println("HIT "+ hitActor.getName());
+			if(hitActor instanceof SquareActor) {
+			  	chosenSquare = (SquareActor) hitActor;
+				hideRange();
+				moveKnight();
+			}
+		}
 		return false;
 	}
 

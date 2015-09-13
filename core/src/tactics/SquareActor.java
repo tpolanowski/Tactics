@@ -9,10 +9,31 @@ public class SquareActor extends Actor{
     ShapeRenderer shapeRenderer;
     static private boolean projectionMatrixSet;
 
+    public int getxNo() {
+        return xNo;
+    }
+
+    public void setxNo(int xNo) {
+        this.xNo = xNo;
+    }
+
+    public int getyNo() {
+        return yNo;
+    }
+
+    public void setyNo(int yNo) {
+        this.yNo = yNo;
+    }
+
+    int xNo;
+    int yNo;
+
     public SquareActor() {
         shapeRenderer = new ShapeRenderer();
         //shapeRenderer.setProjectionMatrix(cameraCombined);
         projectionMatrixSet = false;
+        super.setWidth(40);
+        super.setHeight(30);
     }
 
     /**
